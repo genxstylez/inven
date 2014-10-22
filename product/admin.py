@@ -6,7 +6,7 @@ from product.models import Item, VariationType, Variation, ItemVariation
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price')
+    list_display = ('sku', 'name', 'price', 'gender')
 
 
 @admin.register(VariationType)

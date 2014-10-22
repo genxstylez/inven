@@ -6,11 +6,17 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Item(models.Model):
+    GENDER_CHOICES = (
+        ('M', _('male')),
+        ('F', _('female'))
+    )
+    sku = models.CharField(_('sku'), max_length=100)
     name = models.CharField(_('name'), max_length=200)
     price = models.PositiveIntegerField(_('price'))
+    gender = models.CharField(_('gender'), max_length=1, choices=GENDER_CHOICES, default='M')
 
     def __unicode__(self):
-        return self.name
+        return '{} - {} ({})'.format(self.sku, self.name, self.gender)
 
 
 class VariationType(models.Model):

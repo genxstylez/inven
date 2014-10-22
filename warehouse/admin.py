@@ -12,3 +12,5 @@ class WarehouseAdmin(admin.ModelAdmin):
 @admin.register(WarehouseItemVariation)
 class WarehouseItemVariation(admin.ModelAdmin):
     list_display = ('warehouse', 'item', 'variation', 'quantity')
+    list_filter = ('warehouse',)
+    search_fields = ['item__sku', 'item__name']

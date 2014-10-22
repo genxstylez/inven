@@ -20,7 +20,7 @@ class WarehouseItemVariation(models.Model):
     warehouse = models.ForeignKey(Warehouse, verbose_name=_('warehouse'))
     item = models.ForeignKey(Item, verbose_name=('item'))
     variation = models.ForeignKey(Variation, verbose_name=('variation'))
-    quantity = models.PositiveSmallIntegerField(_('quantity'))
+    quantity = models.PositiveSmallIntegerField(_('quantity'), default=0)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     last_modified = models.DateTimeField(_('last modified'), auto_now=True)
 

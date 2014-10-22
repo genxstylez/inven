@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
+ROOT_PATH = os.path.dirname(__file__)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -102,3 +102,8 @@ except ImportError:
 
 
 STATIC_URL = '/static/' if DEBUG else '/assets/'
+
+TEMPLATE_DIRS = (
+    os.path.join(ROOT_PATH, 'templates'),
+    os.path.join(ROOT_PATH, '../templates')
+)

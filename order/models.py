@@ -19,13 +19,15 @@ class Order(models.Model):
     price = models.PositiveIntegerField(_('price'))
     type = models.CharField(_('type'), max_length=2, choices=TYPE_CHOICES, default='2')
     wiv = models.ForeignKey(WarehouseItemVariation, verbose_name=_('item'))
-    created_at = models.DateTimeField(_('created at'))
+    description = models.CharField(_('description'), max_length=100, blank=True)
+    created_at = models.DateField(_('created at'))
     last_modified = models.DateTimeField(_('last modified'), auto_now=True)
 
 
-def update_warehouse_stock(sender, instance, **kwargs):
-    instance.wiv.quantity -= 1
-    instance.wiv.save()
+def update_warehouse_stock(sender, instance, created, **kwargs):
+    if created:
+        instance.wiv.quantity -= 1
+        instance.wiv.save()
 
 
 post_save.connect(update_warehouse_stock, sender=Order)
