@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.db import IntegrityError
 from warehouse.models import WarehouseItemVariation, Warehouse
 
@@ -50,18 +50,30 @@ class Transfer(models.Model):
 
 
 def transfer_warehouse(sender, instance, **kwargs):
-    instance.from_wiv.quantity -= instance.quantity
     try:
-        wiv = WarehouseItemVariation.objects.get(warehouse=instance.warehouse, item=instance.from_wiv.item, variation=instance.from_wiv.variation)
+        wiv = WarehouseItemVariation.objects.get(warehouse=instance.to_warehouse, item=instance.from_wiv.item, variation=instance.from_wiv.variation)
         wiv.quantity += instance.quantity
         wiv.save()
+
+        instance.from_wiv.quantity -= instance.quantity
+        instance.from_wiv.save()
+
     except WarehouseItemVariation.DoesNotExist:
         WarehouseItemVariation.objects.create(
-            warehouse=instance.warehouse,
+            warehouse=instance.to_warehouse,
             item=instance.from_wiv.item,
             variation=instance.from_wiv.variation,
             quantity=instance.quantity)
 
+        instance.from_wiv.quantity -= instance.quantity
+        instance.from_wiv.save()
+
+def delete_transfer(sender, instance, **kwargs):
+    from_wiv = instance.from_wiv
+    from_wiv.quantity += instance.quantity
+    from_wiv.save()
+
 
 post_save.connect(update_warehouse_stock, sender=Order)
 post_save.connect(transfer_warehouse, sender=Transfer)
+pre_delete.connect(delete_transfer, sender=Transfer)
