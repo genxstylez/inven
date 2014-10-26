@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 
 from django.db import models
@@ -10,7 +11,7 @@ class Item(models.Model):
         ('M', _('male')),
         ('F', _('female'))
     )
-    sku = models.CharField(_('sku'), max_length=100)
+    sku = models.CharField(_('sku'), max_length=100, unique=True)
     name = models.CharField(_('name'), max_length=200)
     price = models.PositiveIntegerField(_('price'))
     gender = models.CharField(_('gender'), max_length=1, choices=GENDER_CHOICES, default='M')

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 
 from django.db import models
@@ -22,6 +23,9 @@ class Order(models.Model):
     description = models.CharField(_('description'), max_length=100, blank=True)
     created_at = models.DateField(_('created at'))
     last_modified = models.DateTimeField(_('last modified'), auto_now=True)
+
+    def __unicode__(self):
+        return '{} @ ${} ({})'.format(self.wiv, self.price, self.get_type_display())
 
 
 def update_warehouse_stock(sender, instance, created, **kwargs):
