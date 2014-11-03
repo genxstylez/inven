@@ -18,6 +18,12 @@ $(function() {
             $('.total').html(total);
         });
     });
+    $('form').submit(function() {
+        var r = confirm('Are you sure?');
+        if(!r)
+            return false;
+    });
+    $('.table-fixed-header').fixedHeader();
 });
 </script>
 {% endblock %}
@@ -32,8 +38,8 @@ $(function() {
         {% endfor %}
     </select>
     <hr>
-    <table class="table table-responsive table-bordered table-hover">
-        <thead>
+    <table class="table table-responsive table-bordered table-hover table-fixed-header">
+        <thead class="header">
             <tr>
                 <th>SKU</th>
                 <th>Name</th>
@@ -43,6 +49,12 @@ $(function() {
                 <th>Count</th>
             </tr>
         </thead>
+        <tfoot>
+            <tr>
+                <td colspan={{ variations.count|add:2 }} style="text-align:right;">Total</td>
+                <td class="total"></td>
+            </tr>
+        </tfoot>
         {{ formset.management_form }}
         {% if formset.errors %}
             {{ formset.errors }}
@@ -66,12 +78,6 @@ $(function() {
             </tr>
             {% endfor %}
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan={{ variations.count|add:2 }} style="text-align:right;">Total</td>
-                <td class="total"></td>
-            </tr>
-        </tfoot>
     </table>
     <button type="submit" class="btn btn-primary">Submit</button>
 

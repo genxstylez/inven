@@ -38,11 +38,16 @@
         });
 
         $('form').submit(function(event) {
+            var r = confirm('Are you sure?');
+            if(!r)
+                return false;
+
             if($('select[name="from_store"]').val() == $('select[name="to_store"]').val()) {
                 alert('From Store and To Store cannot be the same');
                 event.preventDefault();
             }
         });
+        $('.table-fixed-header').fixedHeader();
     });
 </script>
 {% endblock %}
@@ -65,8 +70,8 @@
 
     <hr>
 
-    <table class="table table-responsive table-bordered table-hover">
-        <thead>
+    <table class="table table-responsive table-bordered table-hover table-fixed-header">
+        <thead class="header">
             <tr>
                 <th>SKU</th>
                 <th>Name</th>

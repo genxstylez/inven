@@ -108,3 +108,8 @@ TEMPLATE_DIRS = (
     os.path.join(ROOT_PATH, 'templates'),
     os.path.join(ROOT_PATH, '../templates')
 )
+
+
+STATICFILES_DIRS = (
+    os.path.join(ROOT_PATH, "static"),
+)
