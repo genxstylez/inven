@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block pre_scripts %}
+<script type="text/javascript">
+    $(function() { 
+        $('input').change(function() {
+            this_input = $(this);
+            qty = $(this).val();
+            url = '/check_stock/' + $('select[name="from_store"]').val() + '/' + $(this).prev().val() + '/';
+            $.get(url, data={'quantity': qty}, function() {
+                this_input.closest('.form-group').removeClass('has-error').addClass('has-success');
+            }).error(function() {
+                this_input.closest('.form-group').removeClass('has-success').addClass('has-error');
+            });
+        });
+        $('select[name="from_store"]').change(function() {
+            $('.form-group').removeClass('has-error').removeClass('has-success');
+            $('input.qty').val('0');
+        });
+        
+        $('form').submit(function(event) {
+            if($('select[name="from_store"]').val() == $('select[name="to_store"]').val()) {
+                alert('From Store and To Store cannot be the same');
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% block content %}
+<h2>Transfer Stock</h2>
+<form method="post">
+    {% csrf_token %}
+    From Store:
+    <select name="from_store" class="form-control">
+        {% for store in stores %}
+        <option value={{ store.id }}>{{ store.name }}</option>
+        {% endfor %}
+    </select>
+    To Store:
+    <select name="to_store" class="form-control">
+        {% for store in stores %}
+        <option value={{ store.id }}>{{ store.name }}</option>
+        {% endfor %}
+    </select>
+
+    <hr>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                {% for variation in variations %}
+                <th>{{ variation.name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        {{ formset.management_form }}
+        {% if formset.errors %}
+            {{ formset.errors }}
+        {% endif %}
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.sku }}</td>
+                <td>{{ item.name }}</td>
+                {% for form in formset %}
+                    {% if form.item.value == item.id %}
+                        <td>
+                            <div class="form-group">
+                            {{ form.iv.as_hidden }}
+                            {{ form.quantity }}
+                            </div>
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>
+{% endblock %}
+

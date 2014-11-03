@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0003_order_description'),
+        ('product', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='created_at',
-            field=models.DateField(verbose_name='created at'),
+            model_name='item',
+            name='variation_type',
+            field=models.ForeignKey(to='product.VariationType'),
         ),
     ]

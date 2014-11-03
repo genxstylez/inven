@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Add Stock</h2>
+<form method="post">
+    {% csrf_token %}
+    Choose a Store:
+    <select name="store" class="form-control">
+        {% for store in stores %}
+        <option value={{ store.id }}>{{ store.name }}</option>
+        {% endfor %}
+    </select>
+    <hr>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                {% for variation in variations %}
+                <th>{{ variation.name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        {{ formset.management_form }}
+        {% if formset.errors %}
+            {{ formset.errors }}
+        {% endif %}
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.sku }}</td>
+                <td>{{ item.name }}</td>
+                {% for form in formset %}
+                    {% if form.item.value == item.id %}
+                        <td>
+                            <div class="form-group">
+                            {{ form.iv.as_hidden }}
+                                {{ form.quantity }}
+                            </div>
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>
+{% endblock %}
+

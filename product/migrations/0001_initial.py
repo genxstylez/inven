@@ -14,8 +14,10 @@ class Migration(migrations.Migration):
             name='Item',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('sku', models.CharField(unique=True, max_length=100, verbose_name='sku')),
                 ('name', models.CharField(max_length=200, verbose_name='name')),
                 ('price', models.PositiveIntegerField(verbose_name='price')),
+                ('gender', models.CharField(default='M', max_length=1, verbose_name='gender', choices=[('M', 'male'), ('F', 'female')])),
             ],
             options={
             },
@@ -25,10 +27,9 @@ class Migration(migrations.Migration):
             name='ItemVariation',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('quantity', models.PositiveSmallIntegerField(verbose_name='quantity')),
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created at')),
                 ('last_modified', models.DateTimeField(auto_now=True, verbose_name='last modified')),
-                ('item', models.ForeignKey(verbose_name=b'item', to='product.Item')),
+                ('item', models.ForeignKey(verbose_name='item', to='product.Item')),
             ],
             options={
             },
@@ -57,13 +58,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='variation',
             name='type',
-            field=models.ForeignKey(related_name=b'variations', verbose_name='type', to='product.VariationType'),
+            field=models.ForeignKey(related_name='variations', verbose_name='type', to='product.VariationType'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='itemvariation',
             name='variation',
-            field=models.ForeignKey(verbose_name=b'variation', to='product.Variation'),
+            field=models.ForeignKey(verbose_name='variation', to='product.Variation'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='item',
+            name='variation_type',
+            field=models.ForeignKey(to='product.Variation'),
             preserve_default=True,
         ),
     ]
