@@ -1,4 +1,26 @@
 {% extends 'base.html' %}
+{% block pre_scripts %}
+<script type="text/javascript">
+$(function() {
+    $('.qty').change(function() {
+        count = 0;
+        row = $(this).closest('tr').find('.qty');
+        $(row).each(function() {
+            count += parseInt($(this).val());
+        });
+        $(this).closest('tr').find('.count').html(count);
+
+        total = 0;
+        $('.count').each(function() {
+            if($(this).html() != '') {
+                total += parseInt($(this).html());
+            }
+            $('.total').html(total);
+        });
+    });
+});
+</script>
+{% endblock %}
 {% block content %}
 <h2>Add Stock</h2>
 <form method="post">
@@ -10,7 +32,7 @@
         {% endfor %}
     </select>
     <hr>
-    <table class="table table-bordered table-hover">
+    <table class="table table-responsive table-bordered table-hover">
         <thead>
             <tr>
                 <th>SKU</th>
@@ -18,6 +40,7 @@
                 {% for variation in variations %}
                 <th>{{ variation.name }}</th>
                 {% endfor %}
+                <th>Count</th>
             </tr>
         </thead>
         {{ formset.management_form }}
@@ -39,9 +62,16 @@
                         </td>
                     {% endif %}
                 {% endfor %}
+                <td class="count"></td>
             </tr>
             {% endfor %}
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan={{ variations.count|add:2 }} style="text-align:right;">Total</td>
+                <td class="total"></td>
+            </tr>
+        </tfoot>
     </table>
     <button type="submit" class="btn btn-primary">Submit</button>
 

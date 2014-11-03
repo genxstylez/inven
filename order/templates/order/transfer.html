@@ -2,21 +2,41 @@
 {% block pre_scripts %}
 <script type="text/javascript">
     $(function() { 
-        $('input').change(function() {
+        $('.qty').change(function() {
+            // Update row total
+            count = 0;
+            row = $(this).closest('tr').find('.qty');
+            $(row).each(function() {
+                count += parseInt($(this).val());
+            });
+            $(this).closest('tr').find('.count').html(count);
+
+            // Update total
+            total = 0;
+            $('.count').each(function() {
+                if($(this).html() != '') {
+                    total += parseInt($(this).html());
+                }
+                $('.total').html(total);
+            });
+
+            //Check Stock
             this_input = $(this);
-            qty = $(this).val();
+            qty = $(this).val() || 0;
             url = '/check_stock/' + $('select[name="from_store"]').val() + '/' + $(this).prev().val() + '/';
+           
             $.get(url, data={'quantity': qty}, function() {
                 this_input.closest('.form-group').removeClass('has-error').addClass('has-success');
             }).error(function() {
                 this_input.closest('.form-group').removeClass('has-success').addClass('has-error');
             });
         });
+
         $('select[name="from_store"]').change(function() {
             $('.form-group').removeClass('has-error').removeClass('has-success');
             $('input.qty').val('0');
         });
-        
+
         $('form').submit(function(event) {
             if($('select[name="from_store"]').val() == $('select[name="to_store"]').val()) {
                 alert('From Store and To Store cannot be the same');
@@ -45,7 +65,7 @@
 
     <hr>
 
-    <table class="table table-striped">
+    <table class="table table-responsive table-bordered table-hover">
         <thead>
             <tr>
                 <th>SKU</th>
@@ -53,6 +73,7 @@
                 {% for variation in variations %}
                 <th>{{ variation.name }}</th>
                 {% endfor %}
+                <th>Count</th>
             </tr>
         </thead>
         {{ formset.management_form }}
@@ -74,9 +95,16 @@
                         </td>
                     {% endif %}
                 {% endfor %}
+                <td class="count"></td>
             </tr>
             {% endfor %}
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan={{ variations.count|add:2 }} style="text-align:right;">Total</td>
+                <td class="total"></td>
+            </tr>
+        </tfoot>
     </table>
     <button type="submit" class="btn btn-primary">Submit</button>
 

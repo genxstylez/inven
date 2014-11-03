@@ -11,11 +11,14 @@ from store.models import Store, StoreItemVariation
 
 @staff_member_required
 def check_stock(request, store_id, iv_id):
-    siv = StoreItemVariation.objects.get(store__id=store_id, iv__id=iv_id)
-    quantity = int(request.GET.get('quantity', 0))
-    if quantity > 0:
-        if siv.quantity - quantity >= 0:
-            return HttpResponse(True)
+    try:
+        siv = StoreItemVariation.objects.get(store__id=store_id, iv__id=iv_id)
+        quantity = int(request.GET.get('quantity', 0))
+        if quantity >= 0:
+            if siv.quantity - quantity >= 0:
+                return HttpResponse(True)
+    except StoreItemVariation.DoesNotExist:
+        pass
         
     return HttpResponseBadRequest()
 
@@ -41,7 +44,7 @@ def add_stock(request, type='Shoe Size'):
                 siv, created = StoreItemVariation.objects.get_or_create(store=instance.store, iv=instance.iv)
                 siv.quantity += instance.quantity
                 siv.save()
-                
+
         return redirect('add-stock')
 
     return render(request, 'store/add.html', {
