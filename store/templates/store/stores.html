@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Stores</h2>
+    <hr>
+    <div class="list-group">
+        {% for store in stores %}
+        <a href="{% url 'store-stock' store.id %}" class="list-group-item">{{ store.name }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}

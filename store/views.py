@@ -10,6 +10,12 @@ from store.models import Store, StoreItemVariation
 
 
 @staff_member_required
+def stores(request):
+    stores = Store.objects.all()
+    return render(request, 'store/stores.html', {'stores': stores})
+
+
+@staff_member_required
 def check_stock(request, store_id, iv_id):
     try:
         siv = StoreItemVariation.objects.get(store__id=store_id, iv__id=iv_id)
@@ -19,7 +25,6 @@ def check_stock(request, store_id, iv_id):
                 return HttpResponse(True)
     except StoreItemVariation.DoesNotExist:
         pass
-        
     return HttpResponseBadRequest()
 
 
@@ -51,5 +56,19 @@ def add_stock(request, type='Shoe Size'):
         'stores': stores,
         'formset': formset,
         'items': items,
+        'variations': variation_type.variations.all()
+    })
+
+
+@staff_member_required
+def store_stock(request, store_id, type='Shoe Size'):
+    variation_type = VariationType.objects.get(name=type)
+    items = Item.objects.filter(variation_type=variation_type)
+    store = Store.objects.get(id=store_id)
+    sivs = StoreItemVariation.objects.filter(store=store)
+
+    return render(request, 'store/stock.html', {
+        'items': items,
+        'sivs': sivs,
         'variations': variation_type.variations.all()
     })

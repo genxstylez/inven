@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block pre_scripts %}
+<script type="text/javascript">
+$(function() {
+    $('tr.tr-row').each(function() {
+        count = 0;
+        $(this).find('.qty').each(function() {
+            count += parseInt($(this).html());
+        })
+        $(this).find('.count').html(count);
+    });
+
+    total = 0;
+    $('.count').each(function() {
+        if($(this).html() != '') {
+            total += parseInt($(this).html());
+        }
+        $('.total').html(total);
+    });
+    
+});
+</script>
+{% endblock %}
+{% block content %}
+
+<table class="table table-responsive table-bordered table-hover table-fixed-header">
+    <thead class="header">
+        <tr>
+            <th>SKU</th>
+            <th>Name</th>
+            {% for variation in variations %}
+            <th>{{ variation.name }}</th>
+            {% endfor %}
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td colspan={{ variations.count|add:2 }} style="text-align:right;">Total</td>
+            <td class="total"></td>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for item in items %}
+        <tr class="tr-row">
+            <td>{{ item.sku }}</td>
+            <td>{{ item.name }}</td>
+            {% for siv in sivs %}
+                {% if siv.iv.item == item %}
+                    <td class="qty">{{ siv.quantity }}</td>
+                {% endif %}
+            {% endfor %}
+            <td class="count"></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
