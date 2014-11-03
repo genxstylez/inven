@@ -48,6 +48,7 @@ class Transfer(models.Model):
     from_store = models.ForeignKey(Store, verbose_name=_('From store'), related_name='from_stores')
     to_store = models.ForeignKey(Store, verbose_name=_('To store'), related_name='to_stores')
     created_at = models.DateTimeField(auto_now_add=True)
+    created_at.editable = True
     last_modified = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
@@ -85,7 +86,7 @@ def delete_transferitem(sender, instance, **kwargs):
     from_siv, created = StoreItemVariation.objects.get_or_create(store=from_store, iv=instance.iv)
     from_siv.quantity += instance.quantity
     from_siv.save()
-    
+
     to_store = instance.transfer.to_store
     to_siv, created = StoreItemVariation.objects.get_or_create(store=to_store, iv=instance.iv)
     to_siv.quantity -= instance.quantity
