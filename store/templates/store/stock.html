@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load app_tags %}
 {% block pre_scripts %}
 <script type="text/javascript">
 $(function() {
@@ -45,10 +46,10 @@ $(function() {
         <tr class="tr-row">
             <td>{{ item.sku }}</td>
             <td>{{ item.name }}</td>
-            {% for siv in sivs %}
-                {% if siv.iv.item == item %}
-                    <td class="qty">{{ siv.quantity }}</td>
-                {% endif %}
+            {% for variation in variations %}
+            <td class="qty">
+                {% show_quantity store item variation %}
+            </td>
             {% endfor %}
             <td class="count"></td>
         </tr>
