@@ -71,23 +71,23 @@ class TransferItem(models.Model):
 
 @receiver(post_save, sender=TransferItem)
 def transfer_store(sender, instance, **kwargs):
-    to_siv, created = StoreItemVariation.objects.get_or_create(store=instance.transfer.to_store, iv=instance.iv)
-    to_siv.quantity += instance.quantity
-    to_siv.save()
-
     from_siv = StoreItemVariation.objects.get(store=instance.transfer.from_store, iv=instance.iv)
     from_siv.quantity -= instance.quantity
     from_siv.save()
 
+    to_siv, created = StoreItemVariation.objects.get_or_create(store=instance.transfer.to_store, iv=instance.iv)
+    to_siv.quantity += instance.quantity
+    to_siv.save()
+
 
 @receiver(pre_delete, sender=TransferItem)
 def delete_transferitem(sender, instance, **kwargs):
-    from_store = instance.transfer.from_store
-    from_siv, created = StoreItemVariation.objects.get_or_create(store=from_store, iv=instance.iv)
-    from_siv.quantity += instance.quantity
-    from_siv.save()
-
     to_store = instance.transfer.to_store
     to_siv, created = StoreItemVariation.objects.get_or_create(store=to_store, iv=instance.iv)
     to_siv.quantity -= instance.quantity
     to_siv.save()
+
+    from_store = instance.transfer.from_store
+    from_siv, created = StoreItemVariation.objects.get_or_create(store=from_store, iv=instance.iv)
+    from_siv.quantity += instance.quantity
+    from_siv.save()
